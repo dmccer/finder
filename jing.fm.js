@@ -3,6 +3,7 @@
 
 (function () {
 	var timer;
+	var startExecuteTime;
 	var targetItems = [];
 
 	var search = function (keywords, str) {
@@ -14,6 +15,10 @@
 
 		return !!okSws.length;
 	}
+
+	var now = function () {
+		return +new Date;
+	};
 
 	var finder = function(keywords) {
 	    $.ajax({
@@ -49,7 +54,9 @@
 
 	            targetItems = targetItems.concat(okItems);
 
-	            if (targetItems.length >= 10) {
+	            var currentTime = now();
+	            
+	            if (targetItems.length >= 10 || (currentTime - startExecuteTime) / (1000 * 60) > 3) {
 	            	clearTimeout(timer);
 	            } else {
 	            	timer = setTimeout(function () {
@@ -58,17 +65,19 @@
 	            }
 
 	            var t = "";
+
 	            for (var r = 0; r < targetItems.length; ++r) {
 	                t += '<div class="ntrlLng"><a href="#" class="ntlPlyCtl tkrsFlyEvent" data-fid="CmbtFlyBadge" data-span="' + targetItems[r].sw + '"></a>' + '<blockquote class="qtSch">' + targetItems[r].sw + "</blockquote>" + "</div>"
 	            }
-
-	            console.log(targetItems)
 
 	            $("#ntrlLngTopCtn>.ntrlLngTop").html(t);
 	        }
 	    });
 	};
 
-	finder('程序 代码 命令');
+	$('#ntrlLngBtn').on('click', function () {
+		startExecuteTime = now();
+		finder('程序 代码 命令');	
+	});
 
 })();
